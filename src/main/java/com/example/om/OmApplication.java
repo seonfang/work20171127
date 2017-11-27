@@ -1,12 +1,13 @@
 package com.example.om;
 
-import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+
 import com.example.om.pojo.Person;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 /**
  * 实体类 --> Json -->Pojo
@@ -17,28 +18,26 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @SpringBootApplication
 public class OmApplication {
 
-//	@Autowired
-//	private static ObjectMapper mapper;
-	 public static void main(String args[]){
-       ObjectMapper mapper = new ObjectMapper();
-		    
-	      String jsonString = "{\"name\":\"Seon\", \"age\":21}";
-	      System.out.println(jsonString);
-	      //map json to student
-	      try {
-	         Person person = mapper.readValue(jsonString, Person.class);
-	         System.out.println(person);
-	       
-	         //把对象转成json string类型的
-	         jsonString = mapper.writeValueAsString(person);
-	         System.out.println(jsonString);
-
-	      } catch (JsonParseException e) {
-	         e.printStackTrace();
-	      } catch (JsonMappingException e) {
-	         e.printStackTrace();
-	      } catch (IOException e) {
-	         e.printStackTrace();
-	      }
-	   }
+	@Autowired
+	private  ObjectMapper mapper;
+	
+	 public static void main(String[] args) {
+			SpringApplication.run(OmApplication.class, args);
+		}
+		
+		@Bean
+		public CommandLineRunner runner() {
+			 String jsonString = "{\"name\":\"Seon\", \"age\":21}";
+			return args -> {
+				 System.out.println(jsonString);
+				 System.out.println(mapper.readValue(jsonString, Person.class));
+				System.out.println(mapper.writeValueAsString(mapper.readValue(jsonString, Person.class)));
+			};
+		}
+		@Bean
+		public  ObjectMapper objectMapper() {
+			ObjectMapper objectMapper = new ObjectMapper();
+			return objectMapper;
+		}
+	 
 }
